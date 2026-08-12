@@ -3,270 +3,384 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Controle de Ponto Diário</title>
+    <meta name="theme-color" content="#004d40">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Controle de Ponto Diário - ETB</title>
     <style>
-        /* Reset forçado para evitar que margens nativas do celular quebrem o layout */
         *, *::before, *::after {
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         :root {
             --primary-color: #004d40;
             --secondary-color: #00796b;
-            --bg-color: #f4f7f6;
+            --bg-color: #e0f2f1;
             --text-color: #333;
+            --error-color: #d32f2f;
+            --success-color: #2e7d32;
+            --safe-top: env(safe-area-inset-top, 0px);
+            --safe-bottom: env(safe-area-inset-bottom, 0px);
+            --safe-left: env(safe-area-inset-left, 0px);
+            --safe-right: env(safe-area-inset-right, 0px);
         }
         
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #e0f2f1 0%, #b2dfdb 100%);
             color: var(--text-color);
             margin: 0;
-            padding: 15px;
+            padding: 20px var(--safe-right) 40px var(--safe-left);
+            padding-top: calc(20px + var(--safe-top));
+            min-height: 100vh;
             display: flex;
             justify-content: center;
-            align-items: flex-start;
-            min-height: 100vh;
         }
         
         .container {
             background: #fff;
             max-width: 500px;
             width: 100%;
-            padding: 20px; /* Ajuste sutil no padding */
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            box-sizing: border-box;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,77,64,0.15);
         }
 
         h2 {
             text-align: center;
             color: var(--primary-color);
             margin-top: 0;
-            border-bottom: 2px solid var(--secondary-color);
-            padding-bottom: 10px;
-            font-size: 1.4em;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
 
         .clock-box {
-            background: #e0f2f1;
-            color: var(--primary-color);
+            background: var(--primary-color);
+            color: #fff;
             text-align: center;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            font-size: 2.2em;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            font-size: 2.8em;
             font-weight: bold;
-            letter-spacing: 2px;
-            box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
-            width: 100%;
-            box-sizing: border-box;
+            letter-spacing: 3px;
+            font-variant-numeric: tabular-nums;
+            box-shadow: 0 4px 10px rgba(0,77,64,0.2);
         }
 
         .form-group {
-            margin-bottom: 15px;
-            width: 100%;
-            box-sizing: border-box;
+            margin-bottom: 18px;
+        }
+
+        .input-wrapper {
+            display: flex;
+            gap: 10px;
+            align-items: center;
         }
 
         label {
             display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
+            margin-bottom: 8px;
+            font-weight: 600;
             font-size: 0.95em;
+            color: #555;
         }
 
-        /* Correção aplicada aqui: display block e margin 0 */
         input[type="time"] {
-            display: block;
-            width: 100%;
+            flex: 1;
+            height: 50px; /* Tamanho grande para toque no mobile */
             margin: 0;
-            padding: 12px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
+            padding: 0 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
             font-size: 1.2em;
             background-color: #fafafa;
-            box-sizing: border-box;
             font-family: inherit;
+            color: var(--text-color);
+            transition: border-color 0.2s;
         }
 
-        button {
-            display: block;
+        input[type="time"]:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+            background-color: #fff;
+        }
+
+        .btn-now {
+            height: 50px;
+            width: 50px;
+            border: none;
+            background: #f5f5f5;
+            border-radius: 10px;
+            font-size: 1.4em;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+            color: var(--secondary-color);
+        }
+
+        .btn-now:active {
+            background: #e0e0e0;
+            transform: scale(0.95);
+        }
+
+        button.main-btn {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
             width: 100%;
-            margin: 10px 0 0 0;
-            padding: 15px;
-            background-color: var(--primary-color);
+            height: 55px;
+            margin-top: 10px;
+            background-color: var(--secondary-color);
             color: white;
             border: none;
-            border-radius: 8px;
-            font-size: 1.1em;
+            border-radius: 10px;
+            font-size: 1.15em;
             font-weight: bold;
             cursor: pointer;
-            transition: background 0.3s;
-            -webkit-tap-highlight-color: transparent;
-            box-sizing: border-box;
+            transition: all 0.2s;
+            box-shadow: 0 4px 0 #004d40;
         }
 
-        button:hover, button:active {
-            background-color: var(--secondary-color);
+        button.main-btn:active {
+            transform: translateY(4px);
+            box-shadow: none;
+            background-color: var(--primary-color);
         }
 
-        .btn-danger {
-            background-color: #d32f2f;
-            margin-top: 20px;
-            font-size: 1em;
-        }
-
-        .btn-danger:hover, .btn-danger:active {
-            background-color: #b71c1c;
+        /* Mensagem de Erro */
+        .error-msg {
+            color: var(--error-color);
+            font-size: 0.9em;
+            text-align: center;
+            margin-top: 10px;
+            min-height: 20px;
+            transition: opacity 0.3s;
         }
 
         .result-box {
-            margin-top: 20px;
-            padding: 15px;
-            background: #e0f2f1;
-            border-left: 5px solid var(--secondary-color);
+            margin-top: 25px;
+            padding: 20px;
+            background: #e8f5e9;
+            border-left: 5px solid var(--success-color);
             border-radius: 8px;
             text-align: center;
-            animation: fadeIn 0.5s ease-in-out;
-            width: 100%;
-            box-sizing: border-box;
+            animation: fadeIn 0.4s ease-out;
         }
 
         .result-title {
-            font-size: 1.3em;
-            font-weight: bold;
-            color: var(--primary-color);
+            font-size: 1.1em;
+            color: #555;
+            margin-bottom: 5px;
+        }
+
+        .result-time {
+            font-size: 2.2em;
+            font-weight: 800;
+            color: var(--success-color);
         }
 
         .history-section {
-            margin-top: 30px;
-            width: 100%;
-            box-sizing: border-box;
+            margin-top: 35px;
         }
 
         .history-section h3 {
             font-size: 1.1em;
             color: var(--primary-color);
-            border-bottom: 1px solid #ddd;
-            padding-bottom: 5px;
-        }
-
-        .table-responsive {
-            width: 100%;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-            margin-top: 10px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.9em;
-            min-width: 350px; 
+            font-size: 0.95em;
         }
 
         th, td {
-            border: 1px solid #ddd;
-            padding: 10px 8px;
+            padding: 12px 8px;
             text-align: center;
-            white-space: nowrap;
+            border-bottom: 1px solid #eee;
         }
 
         th {
-            background-color: #f0f0f0;
+            color: #777;
+            font-weight: 600;
+            font-size: 0.85em;
+            text-transform: uppercase;
+        }
+
+        .btn-danger {
+            display: block;
+            width: 100%;
+            margin-top: 20px;
+            padding: 12px;
+            background-color: #fff;
+            color: var(--error-color);
+            border: 2px solid var(--error-color);
+            border-radius: 10px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-danger:active {
+            background-color: var(--error-color);
+            color: #fff;
+        }
+
+        /* Mobile First: Transforma tabela em cards */
+        @media (max-width: 600px) {
+            .clock-box { font-size: 2.2em; padding: 15px; }
+            
+            table, thead, tbody, th, td, tr {
+                display: block;
+            }
+            
+            thead tr { display: none; } /* Esconde cabeçalho */
+            
+            tr {
+                border: 1px solid #eee;
+                border-radius: 10px;
+                margin-bottom: 15px;
+                padding: 10px;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            }
+            
+            td {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 8px 5px;
+                border-bottom: 1px solid #f5f5f5;
+                text-align: right;
+            }
+            
+            td:last-child { border-bottom: none; }
+            td::before {
+                content: attr(data-label);
+                font-weight: bold;
+                text-transform: uppercase;
+                font-size: 0.8em;
+                color: #777;
+                margin-right: 10px;
+                text-align: left;
+            }
+            td:nth-child(1)::before { display: none; }
+            td:nth-child(1) { 
+                justify-content: center; 
+                font-weight: bold; 
+                color: var(--primary-color);
+                border-bottom: 2px solid var(--secondary-color);
+                margin-bottom: 5px;
+                padding-bottom: 10px;
+            }
         }
 
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(-10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-
-        @media (max-width: 480px) {
-            body {
-                padding: 10px;
-            }
-            .container {
-                padding: 15px;
-            }
-            .clock-box {
-                font-size: 1.8em;
-                padding: 10px;
-            }
-            h2 {
-                font-size: 1.2em;
-            }
-            input[type="time"], button {
-                font-size: 1.1em;
-            }
-        }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h2>Controle de Ponto Diário</h2>
+        <h2>🕒 Controle de Ponto</h2>
         
         <div class="clock-box" id="relogio">00:00:00</div>
         
         <div class="form-group">
-            <label for="entrada">Horário de Entrada (Chegada):</label>
-            <input type="time" id="entrada" value="07:30" required>
+            <label for="entrada">Entrada (Chegada)</label>
+            <div class="input-wrapper">
+                <input type="time" id="entrada" required>
+                <button class="btn-now" onclick="preencherHoraAgora('entrada')" title="Usar hora atual">⏱</button>
+            </div>
         </div>
         
         <div class="form-group">
-            <label for="saidaAlmoco">Saída para o Almoço:</label>
-            <input type="time" id="saidaAlmoco" value="12:00" required>
+            <label for="saidaAlmoco">Saída para o Almoço</label>
+            <div class="input-wrapper">
+                <input type="time" id="saidaAlmoco" required>
+                <button class="btn-now" onclick="preencherHoraAgora('saidaAlmoco')" title="Usar hora atual">⏱</button>
+            </div>
         </div>
 
         <div class="form-group">
-            <label for="retornoAlmoco">Retorno do Almoço:</label>
-            <input type="time" id="retornoAlmoco" value="13:00" required>
+            <label for="retornoAlmoco">Retorno do Almoço</label>
+            <div class="input-wrapper">
+                <input type="time" id="retornoAlmoco" required>
+                <button class="btn-now" onclick="preencherHoraAgora('retornoAlmoco')" title="Usar hora atual">⏱</button>
+            </div>
         </div>
 
-        <button onclick="calcularESalvar()">Calcular Saída Exata</button>
+        <div class="error-msg" id="errorMsg"></div>
+
+        <button class="main-btn" onclick="calcularESalvar()">
+            Calcular Saída Exata
+        </button>
 
         <div id="resultadoContainer" class="result-box" style="display: none;">
-            <div class="result-title">Sair às: <span id="horaSaidaCalculada">--:--</span></div>
+            <div class="result-title">Você deve sair às:</div>
+            <div class="result-time" id="horaSaidaCalculada">--:--</div>
         </div>
 
         <div class="history-section">
-            <h3>Histórico Salvo</h3>
-            <div class="table-responsive">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Data</th>
-                            <th>Entrada</th>
-                            <th>Saída Almoço</th>
-                            <th>Retorno</th>
-                            <th>Saída Final</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tabelaHistorico">
-                    </tbody>
-                </table>
-            </div>
-            <button class="btn-danger" onclick="limparHistorico()">Limpar Histórico</button>
+            <h3>📋 Histórico Salvo</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Entrada</th>
+                        <th>Almoço (S)</th>
+                        <th>Almoço (V)</th>
+                        <th>Saída Final</th>
+                    </tr>
+                </thead>
+                <tbody id="tabelaHistorico">
+                    <tr><td colspan="5" style="color: #999; padding: 20px;">Nenhum registro ainda.</td></tr>
+                </tbody>
+            </table>
+            <button class="btn-danger" onclick="limparHistorico()">Limpar Todo Histórico</button>
         </div>
     </div>
 
     <script>
+        // Relógio
         function atualizarRelogio() {
             const agora = new Date();
-            const horas = String(agora.getHours()).padStart(2, '0');
-            const minutos = String(agora.getMinutes()).padStart(2, '0');
-            const segundos = String(agora.getSeconds()).padStart(2, '0');
-            
-            document.getElementById('relogio').innerText = `${horas}:${minutos}:${segundos}`;
+            const h = String(agora.getHours()).padStart(2, '0');
+            const m = String(agora.getMinutes()).padStart(2, '0');
+            const s = String(agora.getSeconds()).padStart(2, '0');
+            document.getElementById('relogio').innerText = `${h}:${m}:${s}`;
         }
-        
         setInterval(atualizarRelogio, 1000);
         atualizarRelogio(); 
 
-        const JORNADA_DIARIA = 528; 
+        // Preencher hora atual no campo clicado
+        function preencherHoraAgora(id) {
+            const agora = new Date();
+            const h = String(agora.getHours()).padStart(2, '0');
+            const m = String(agora.getMinutes()).padStart(2, '0');
+            document.getElementById(id).value = `${h}:${m}`;
+        }
+
+        const JORNADA_DIARIA = 528; // 8 horas e 48 minutos
         
         function timeToMinutes(timeStr) {
+            if(!timeStr) return 0;
             let parts = timeStr.split(':');
             return parseInt(parts[0], 10) * 60 + parseInt(parts[1], 10);
         }
@@ -277,13 +391,20 @@
             return String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0');
         }
 
+        function showError(msg) {
+            const el = document.getElementById('errorMsg');
+            el.innerText = msg;
+            el.style.opacity = '1';
+            setTimeout(() => el.style.opacity = '0', 3000);
+        }
+
         function calcularESalvar() {
             let entrada = document.getElementById('entrada').value;
             let saidaAlmoco = document.getElementById('saidaAlmoco').value;
             let retornoAlmoco = document.getElementById('retornoAlmoco').value;
 
             if (!entrada || !saidaAlmoco || !retornoAlmoco) {
-                alert("Por favor, preencha todos os horários.");
+                showError("Por favor, preencha todos os horários.");
                 return;
             }
 
@@ -293,13 +414,14 @@
 
             let trabalhadoManha = minSaidaAlmoco - minEntrada;
             
-            if (trabalhadoManha < 0) {
-                alert("A saída para o almoço deve ser maior que a entrada.");
+            if (trabalhadoManha <= 0) {
+                showError("O horário de saída para o almoço deve ser MAIOR que a entrada.");
                 return;
             }
 
             let minutosRestantes = JORNADA_DIARIA - trabalhadoManha;
             let minutoSaidaFinal = minRetornoAlmoco + minutosRestantes;
+            
             let horarioSaida = minutesToTime(minutoSaidaFinal);
 
             document.getElementById('horaSaidaCalculada').innerText = horarioSaida;
@@ -312,29 +434,44 @@
             let hoje = new Date().toLocaleDateString('pt-BR');
             let registro = { data: hoje, entrada, saidaAlmoco, retornoAlmoco, saidaFinal };
             
-            let historico = JSON.parse(localStorage.getItem('pontoETB')) || [];
-            historico = historico.filter(item => item.data !== hoje);
-            historico.unshift(registro); 
-            
-            if (historico.length > 10) historico.pop();
+            try {
+                let historico = JSON.parse(localStorage.getItem('pontoETB')) || [];
+                // Atualiza se já existir registro para hoje
+                historico = historico.filter(item => item.data !== hoje);
+                historico.unshift(registro); 
+                
+                if (historico.length > 15) historico.pop(); // Guarda mais histórico
 
-            localStorage.setItem('pontoETB', JSON.stringify(historico));
-            carregarHistorico();
+                localStorage.setItem('pontoETB', JSON.stringify(historico));
+                carregarHistorico();
+            } catch (e) {
+                console.error("Erro ao salvar no localStorage (Modo anônimo?)", e);
+            }
         }
 
         function carregarHistorico() {
-            let historico = JSON.parse(localStorage.getItem('pontoETB')) || [];
+            let historico = [];
+            try {
+                historico = JSON.parse(localStorage.getItem('pontoETB')) || [];
+            } catch(e) {}
+
             let tbody = document.getElementById('tabelaHistorico');
             tbody.innerHTML = '';
 
+            if (historico.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="color: #999; padding: 20px;">Nenhum registro ainda.</td></tr>';
+                return;
+            }
+
             historico.forEach(item => {
                 let tr = document.createElement('tr');
+                // Adicionado data-label para o layout mobile (cards)
                 tr.innerHTML = `
-                    <td>${item.data}</td>
-                    <td>${item.entrada}</td>
-                    <td>${item.saidaAlmoco}</td>
-                    <td>${item.retornoAlmoco}</td>
-                    <td><strong>${item.saidaFinal}</strong></td>
+                    <td data-label="Data">${item.data}</td>
+                    <td data-label="Entrada">${item.entrada}</td>
+                    <td data-label="Saída Almoço">${item.saidaAlmoco}</td>
+                    <td data-label="Retorno Almoço">${item.retornoAlmoco}</td>
+                    <td data-label="Saída Final"><strong>${item.saidaFinal}</strong></td>
                 `;
                 tbody.appendChild(tr);
             });
@@ -342,7 +479,9 @@
 
         function limparHistorico() {
             if(confirm("Tem certeza que deseja apagar todo o histórico?")) {
-                localStorage.removeItem('pontoETB');
+                try {
+                    localStorage.removeItem('pontoETB');
+                } catch(e) {}
                 carregarHistorico();
             }
         }
