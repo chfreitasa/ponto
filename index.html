@@ -2,10 +2,14 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <!-- Meta tag essencial para adaptação mobile -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Controle de Ponto Diário</title>
+    <title>Controle de Ponto Diário - ETB</title>
     <style>
+        /* A regra abaixo resolve o problema dos campos vazarem no celular */
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
         :root {
             --primary-color: #004d40;
             --secondary-color: #00796b;
@@ -32,7 +36,7 @@
             padding: 25px;
             border-radius: 12px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            box-sizing: border-box;
+            overflow: hidden; /* Garante que nada saia do card */
         }
 
         h2 {
@@ -44,7 +48,6 @@
             font-size: 1.4em;
         }
 
-        /* Estilo do Relógio */
         .clock-box {
             background: #e0f2f1;
             color: var(--primary-color);
@@ -56,10 +59,12 @@
             font-weight: bold;
             letter-spacing: 2px;
             box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+            width: 100%;
         }
 
         .form-group {
             margin-bottom: 15px;
+            width: 100%;
         }
 
         label {
@@ -69,18 +74,16 @@
             font-size: 0.95em;
         }
 
-        /* Inputs adaptados para touch */
         input[type="time"] {
             width: 100%;
+            max-width: 100%;
             padding: 12px;
             border: 1px solid #ccc;
             border-radius: 8px;
             font-size: 1.2em;
-            box-sizing: border-box;
             background-color: #fafafa;
         }
 
-        /* Botões adaptados para touch */
         button {
             width: 100%;
             padding: 15px;
@@ -118,6 +121,7 @@
             border-radius: 8px;
             text-align: center;
             animation: fadeIn 0.5s ease-in-out;
+            width: 100%;
         }
 
         .result-title {
@@ -128,6 +132,7 @@
 
         .history-section {
             margin-top: 30px;
+            width: 100%;
         }
 
         .history-section h3 {
@@ -137,7 +142,6 @@
             padding-bottom: 5px;
         }
 
-        /* Container scrollável para a tabela não quebrar o layout mobile */
         .table-responsive {
             width: 100%;
             overflow-x: auto;
@@ -149,7 +153,7 @@
             width: 100%;
             border-collapse: collapse;
             font-size: 0.9em;
-            min-width: 400px; /* Garante que a tabela tenha um tamanho legível antes de gerar o scroll */
+            min-width: 350px; 
         }
 
         th, td {
@@ -168,8 +172,10 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Ajustes específicos para telas muito pequenas */
         @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
             .container {
                 padding: 15px;
             }
@@ -189,9 +195,8 @@
 <body>
 
     <div class="container">
-        <h2>Controle de Ponto Diário</h2>
+        <h2>Controle de Ponto Diário - ETB</h2>
         
-        <!-- Relógio em tempo real -->
         <div class="clock-box" id="relogio">00:00:00</div>
         
         <div class="form-group">
@@ -229,7 +234,6 @@
                         </tr>
                     </thead>
                     <tbody id="tabelaHistorico">
-                        <!-- Registros aparecerão aqui -->
                     </tbody>
                 </table>
             </div>
@@ -238,7 +242,6 @@
     </div>
 
     <script>
-        // -- LÓGICA DO RELÓGIO EM TEMPO REAL --
         function atualizarRelogio() {
             const agora = new Date();
             const horas = String(agora.getHours()).padStart(2, '0');
@@ -248,13 +251,10 @@
             document.getElementById('relogio').innerText = `${horas}:${minutos}:${segundos}`;
         }
         
-        // Atualiza a cada 1 segundo (1000 milissegundos)
         setInterval(atualizarRelogio, 1000);
-        atualizarRelogio(); // Chama imediatamente para não esperar 1 segundo ao carregar
+        atualizarRelogio(); 
 
-
-        // -- LÓGICA DO CÁLCULO DE PONTO --
-        const JORNADA_DIARIA = 528; // 8 horas e 48 minutos
+        const JORNADA_DIARIA = 528; 
         
         function timeToMinutes(timeStr) {
             let parts = timeStr.split(':');
@@ -298,7 +298,6 @@
             salvarNoHistorico(entrada, saidaAlmoco, retornoAlmoco, horarioSaida);
         }
 
-        // -- LÓGICA DE ARMAZENAMENTO NO NAVEGADOR --
         function salvarNoHistorico(entrada, saidaAlmoco, retornoAlmoco, saidaFinal) {
             let hoje = new Date().toLocaleDateString('pt-BR');
             let registro = { data: hoje, entrada, saidaAlmoco, retornoAlmoco, saidaFinal };
@@ -340,6 +339,5 @@
 
         window.onload = carregarHistorico;
     </script>
-
 </body>
 </html>
