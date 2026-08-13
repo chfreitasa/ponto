@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#004d40">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Controle de Ponto Diário - ETB</title>
+    <title>Controle de Ponto Diário</title>
     <style>
         *, *::before, *::after {
             box-sizing: border-box;
@@ -305,7 +305,8 @@
         <div class="form-group">
             <label for="entrada">Entrada (Chegada)</label>
             <div class="input-wrapper">
-                <input type="time" id="entrada" required>
+                <!-- VALOR PADRÃO ADICIONADO AQUI -->
+                <input type="time" id="entrada" value="07:30" required>
                 <button class="btn-now" onclick="preencherHoraAgora('entrada')" title="Usar hora atual">⏱</button>
             </div>
         </div>
@@ -313,7 +314,8 @@
         <div class="form-group">
             <label for="saidaAlmoco">Saída para o Almoço</label>
             <div class="input-wrapper">
-                <input type="time" id="saidaAlmoco" required>
+                <!-- VALOR PADRÃO ADICIONADO AQUI -->
+                <input type="time" id="saidaAlmoco" value="12:00" required>
                 <button class="btn-now" onclick="preencherHoraAgora('saidaAlmoco')" title="Usar hora atual">⏱</button>
             </div>
         </div>
@@ -321,7 +323,8 @@
         <div class="form-group">
             <label for="retornoAlmoco">Retorno do Almoço</label>
             <div class="input-wrapper">
-                <input type="time" id="retornoAlmoco" required>
+                <!-- VALOR PADRÃO ADICIONADO AQUI -->
+                <input type="time" id="retornoAlmoco" value="13:00" required>
                 <button class="btn-now" onclick="preencherHoraAgora('retornoAlmoco')" title="Usar hora atual">⏱</button>
             </div>
         </div>
@@ -465,7 +468,6 @@
 
             historico.forEach(item => {
                 let tr = document.createElement('tr');
-                // Adicionado data-label para o layout mobile (cards)
                 tr.innerHTML = `
                     <td data-label="Data">${item.data}</td>
                     <td data-label="Entrada">${item.entrada}</td>
